@@ -2,11 +2,15 @@
     "name": "mundipagg/ecommerce-test-package",
     "description": "A e-commerce test suite for all Mundipagg e-commerce modules",
     "require": {
+        "behat/behat": "^3.5",
         "behat/mink-extension": "^2.3",
         "dmore/behat-chrome-extension": "^1.3",
         "knplabs/friendly-contexts": "@dev"
     },
-    "require-dev": {
-        "behat/behat": "^3.5"
-    }
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/aitboudad/FriendlyContexts.git"
+        }
+    ]
 }
