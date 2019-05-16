@@ -1,0 +1,5 @@
+{
+    "name": "mundipagg/ecommerce-test-package",
+    "description": "A e-commerce test suite for all Mundipagg e-commerce modules",
+    "require": {}
+}
