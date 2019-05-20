@@ -58,7 +58,7 @@ class FeatureContext extends MinkContext
     public function beforeScenario($event)
     {
         if ($event->getScenario()->hasTag('smartStep')) {
-            return;
+            die();
         }
 
         $this->scenarioTokens = null;
@@ -157,7 +157,6 @@ class FeatureContext extends MinkContext
             "Timeout: $wait seconds."
         );
     }
-
 
     /**
      *
