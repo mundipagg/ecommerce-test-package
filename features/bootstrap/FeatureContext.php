@@ -394,8 +394,13 @@ class FeatureContext extends MinkContext
     {
         $field = $this->replacePlaceholdersByTokens($field);
         $field = $this->fixStepArgument($field);
-        $value = rand(900000, 9999999) . "@test.com";
+        $value = $this->randomEmail();
         $this->getSession()->getPage()->fillField($field, $value);
+    }
+
+    public function randomEmail()
+    {
+        return rand(900000, 99999999) . "@test.com";
     }
 
     /**
@@ -454,9 +459,76 @@ class FeatureContext extends MinkContext
     {
         $node = $this->getSession()->getPage()->find('css', $arg);
         if($node) {
-            $this->getSession()->executeScript("jQuery('$arg').click();");
+            $this->getSession()->executeScript("jQuery('$arg').click().change();");
         } else {
             throw new Exception('Element not found');
+        }
+    }
+
+    /**
+     * @Given I use jquery to fill element :field with value :value
+     */
+    public function iUseJqueryToFillElementWithValue($field, $value)
+    {
+        $node = $this->getSession()->getPage()->find('css', $field);
+        if($node) {
+            $this->getSession()->executeScript("jQuery(\"" .$field . "\").val('" . $value . "').click().change();");
+        } else {
+            throw new Exception('Element not found: ' . "jQuery(\"" .$field . "\").val('" . $value . "').click().change();");
+        }
+    }
+
+    /**
+     * @Given I use jquery to click in element :field
+     */
+    public function iUseJqueryToClickInElement($field)
+    {
+        $node = $this->getSession()->getPage()->find('css', $field);
+        if($node) {
+            $this->getSession()->executeScript("jQuery(\"" . $field . "\").click().change();");
+        } else {
+            throw new Exception('Element not found: ' . "jQuery(\"" . $field . "\").click().change();");
+        }
+    }
+
+    /**
+     * @Given I use jquery to focus in element :field
+     */
+    public function iUseJqueryToFocusInElement($field)
+    {
+        $node = $this->getSession()->getPage()->find('css', $field);
+        if($node) {
+            $this->getSession()->executeScript("jQuery(\"" . $field . "\").focus();");
+        } else {
+            throw new Exception('Element not found: ' . "jQuery(\"" . $field . "\").focus();");
+        }
+    }
+
+    /**
+     * @Given I use jquery to fill element :field with a random email
+     */
+    public function iUseJqueryToFillElementWithARandomEmail($field)
+    {
+        $node = $this->getSession()->getPage()->find('css', $field);
+
+        $value = $this->randomEmail();
+
+        if($node) {
+            $this->getSession()->executeScript("jQuery(\"" .$field . "\").val('" . $value . "').click().change();");
+        } else {
+            throw new Exception('Element not found: ' . "jQuery(\"" .$field . "\").val('" . $value . "').click().change();");
+        }
+    }
+    /**
+     * @Given I use jquery to set :html to element :field with value :value
+     */
+    public function iUseJqueryToSetToElementWithValue($html, $field, $value)
+    {
+        $node = $this->getSession()->getPage()->find('css', $field);
+        if($node) {
+            $this->getSession()->executeScript("jQuery(\"" . $field . "\").html(\"" . $html . "\").val(\"" . $value . "\").click().change();");
+        } else {
+            throw new Exception('Element not found: ' . "jQuery(\"" . $field . "\").html('" . $html . "').val(\"" . $value . "\").click().change();");
         }
     }
 
@@ -492,5 +564,16 @@ class FeatureContext extends MinkContext
         fclose($file);
     }
 
-
+    /**
+     * @Given I check if card brand is selected in element :field
+     */
+    public function iCheckIfCardBrandIsSelectedInElement($field)
+    {
+        $node = $this->getSession()->getPage()->find('css', $field);
+        if($node) {
+            $this->getSession()->executeScript("jQuery(\"" . $field . "\").attr('style') == 'filter: none;'");
+        } else {
+            throw new Exception('Element not found: ' . "jQuery(\"" . $field . "\").attr('style') == 'filter: none;'");
+        }
+    }
 }

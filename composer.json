@@ -12,5 +12,11 @@
             "type": "vcs",
             "url": "https://github.com/aitboudad/FriendlyContexts.git"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-4": {
+            "Mundipagg\\Features\\": "features"
+        }
+    }
+
 }
