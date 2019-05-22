@@ -4,13 +4,13 @@ Feature: Partial Scenarios
   @javascript @smartStep
   Scenario: I go to product page
     Given I am on "/fusion-backpack.html"
-    Then I wait for text "add to cart" to appear, for 10 seconds
+    And I wait for text "add to cart" to appear, for 10 seconds
 
   #I click on add to cart button
   @javascript @smartStep
   Scenario: I click on add to cart button
-    Given I click in element "#product-addtocart-button"
-    Then I wait for text "added" to appear, for 15 seconds
+    And I click in element "#product-addtocart-button"
+    Then I wait for text "added" to appear, for 10 seconds
 
   #I go to user form page
   @javascript @smartStep
@@ -41,8 +41,7 @@ Feature: Partial Scenarios
   @javascript @smartStep
   Scenario: I go to checkout page
     Given I use jquery to click in element ".button.action.continue.primary"
-    Then I wait for 3 seconds
-    And I wait for text "Mundipagg" to appear, for 10 seconds
+    Then I wait for text "Mundipagg" to appear, for 10 seconds
 
   #I select Mundipagg credit card
   @javascript @smartStep
@@ -58,23 +57,22 @@ Feature: Partial Scenarios
     And I wait for text "Month" to appear, for 10 seconds
     And I use jquery to set "<option value='12'>12 - December</option>" to element "select[name='payment[cc_exp_month]']" with value "12"
     And I use jquery to set "<option value='2029'>2029</option>" to element "select[name='payment[cc_exp_year]']" with value "2029"
-    And I use jquery to fill element "input[name='payment[cc_cid]']" with value "123"
     And I use jquery to set "<option value='2' interest='0'>2x of $32.00 without interest (Total: $64.00)</option>" to element "select[name='payment[cc_installments]']" with value "2"
-    Then I wait for 3 seconds
+    And I use jquery to fill element "input[name='payment[cc_cid]']" with value "123"
+    Then I wait for 1 seconds
 
   #I check if card brand is selected
   @javascript @smartStep
   Scenario: I check if card brand is selected
     Given I check if card brand is selected in element ".brands.visa"
 
-  #I click on place order button
+  #I click in place order button
   @javascript @smartStep
-  Scenario: I click on place order button
-    Given I use jquery to click in element ".action.primary.checkout"
-    And I wait for 3 seconds
-    Then I wait for text "Thank you for your purchase" to appear, for "10" seconds
+  Scenario: I click in place order button
+    Given I use jquery to click in element "#creditCardPlaceOrder"
 
-  #I check if order was created
-  #@javascript @smartStep
-  #Scenario: I check if order was created
-    #Given I wait for text "Thank you for your purchase" to appear, for "10" seconds
+  #I check if order was placed
+  @javascript @smartStep
+  Scenario: I check if order was placed
+    Given I wait for text "Thank" to appear, for 10 seconds
+    Then I wait for text "You" to appear, for 10 seconds

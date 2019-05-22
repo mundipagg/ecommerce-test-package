@@ -1,4 +1,4 @@
-Feature: Partial Scenarios
+Feature: Sub Scenarios
 
   #I add a product to cart
   @javascript @smartStep
@@ -35,5 +35,5 @@ Feature: Partial Scenarios
   #I place order
   @javascript @smartStep
   Scenario: I place order
-    Given I click on place order button
-    #Then I check if order was created
+    Given I click in place order button
+    And I check if order was placed

@@ -58,6 +58,7 @@ class FeatureContext extends MinkContext
     public function beforeScenario($event)
     {
         if ($event->getScenario()->hasTag('smartStep')) {
+            //return;
             die();
         }
 
@@ -458,7 +459,7 @@ class FeatureContext extends MinkContext
     {
         $node = $this->getSession()->getPage()->find('css', $arg);
         if($node) {
-            $this->getSession()->executeScript("jQuery('$arg').click().change();");
+            $this->getSession()->executeScript("jQuery('$arg').click();");
         } else {
             throw new Exception('Element not found');
         }
@@ -484,9 +485,9 @@ class FeatureContext extends MinkContext
     {
         $node = $this->getSession()->getPage()->find('css', $field);
         if($node) {
-            $this->getSession()->executeScript("jQuery(\"" . $field . "\").click().change();");
+            $this->getSession()->executeScript("jQuery(\"" . $field . "\").click();");
         } else {
-            throw new Exception('Element not found: ' . "jQuery(\"" . $field . "\").click().change();");
+            throw new Exception('Element not found: ' . "jQuery(\"" . $field . "\").click();");
         }
     }
 
@@ -573,6 +574,19 @@ class FeatureContext extends MinkContext
             $this->getSession()->executeScript("jQuery(\"" . $field . "\").attr('style') == 'filter: none;'");
         } else {
             throw new Exception('Element not found: ' . "jQuery(\"" . $field . "\").attr('style') == 'filter: none;'");
+        }
+    }
+
+    /**
+     * @Given I use jquery for submit the element :field
+     */
+    public function iUseJqueryForSubmit($field)
+    {
+        $node = $this->getSession()->getPage()->find('css', $field);
+        if($node) {
+            $this->getSession()->executeScript("jQuery(\"" . $field . "\").submit();");
+        } else {
+            throw new Exception('Element not found: ' . "jQuery(\"" . $field . "\").submit();");
         }
     }
 }
