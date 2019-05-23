@@ -1,4 +1,4 @@
-Feature: Sub Scenarios
+Feature: Steps
 
   #I add a product to cart
   @javascript @smartStep
@@ -26,14 +26,26 @@ Feature: Sub Scenarios
   Scenario: I select credit card payment method
     Given I select Mundipagg credit card
 
+  #I select boleto payment method
+  @javascript @smartStep
+  Scenario: I select boleto payment method
+    Given I select Mundipagg boleto
+
+
   #I fill credit card data
   @javascript @smartStep
   Scenario: I fill credit card data
     Given I fill credit card form data
     Then I check if card brand is selected
 
-  #I place order
+  #I place order with credit card
   @javascript @smartStep
-  Scenario: I place order
-    Given I click in place order button
+  Scenario: I place order with credit card
+    Given I click in credit card place order button
+    And I check if order was placed
+
+  #I place order with boleto
+  @javascript @smartStep
+  Scenario: I place order with boleto
+    Given I click in boleto place order button
     And I check if order was placed

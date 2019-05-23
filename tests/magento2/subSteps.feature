@@ -1,4 +1,4 @@
-Feature: Partial Scenarios
+Feature: Substeps
 
   #I go to product page
   @javascript @smartStep
@@ -34,6 +34,7 @@ Feature: Partial Scenarios
     And I use jquery to fill element "input[name='postcode']" with value "69152055"
     And I use jquery to fill element "input[name='telephone']" with value "2122222222"
     And I use jquery to fill element "input[name='vat_id']" with value "16674352306"
+    And I wait for 1 seconds
     And I use jquery to click in element "input[name='ko_unique_1']"
     Then I use jquery to set "<option selected='selected' data-title='Rio de Janeiro' value='502'>Rio de Janeiro</option>" to element "select[name='region_id']" with value "502"
 
@@ -48,6 +49,12 @@ Feature: Partial Scenarios
   Scenario: I select Mundipagg credit card
     Given I use jquery to click in element "#mundipagg_creditcard"
     Then I wait for text "Month" to appear, for 10 seconds
+
+  #I select Mundipagg boleto
+  @javascript @smartStep
+  Scenario: I select Mundipagg boleto
+    Given I use jquery to click in element "#mundipagg_billet"
+    Then I wait for 1 seconds
 
   #I fill credit card form data
   @javascript @smartStep
@@ -66,10 +73,17 @@ Feature: Partial Scenarios
   Scenario: I check if card brand is selected
     Given I check if card brand is selected in element ".brands.visa"
 
-  #I click in place order button
+  #I click in credit card place order button
   @javascript @smartStep
-  Scenario: I click in place order button
-    Given I use jquery to click in element "#creditCardPlaceOrder"
+  Scenario: I click in credit card place order button
+    Given I wait for 1 seconds
+    Then I use jquery to click in element "#creditCardPlaceOrder"
+
+  #I click in boleto place order button
+  @javascript @smartStep
+  Scenario: I click in boleto place order button
+    Given I wait for 1 seconds
+    Then I use jquery to click in element "#boletoPlaceOrder"
 
   #I check if order was placed
   @javascript @smartStep
