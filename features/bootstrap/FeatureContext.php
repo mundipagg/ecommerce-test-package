@@ -58,7 +58,6 @@ class FeatureContext extends MinkContext
     public function beforeScenario($event)
     {
         if ($event->getScenario()->hasTag('smartStep')) {
-            //return;
             die();
         }
 
