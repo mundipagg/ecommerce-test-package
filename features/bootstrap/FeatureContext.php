@@ -509,7 +509,6 @@ class FeatureContext extends MinkContext
     public function newSession()
     {
         $this->getSession()->reset();
-        //throw new Exception("as");
     }
 
     /**
