@@ -440,41 +440,29 @@ class FeatureContext extends MinkContext
      *
      * @Given /^I submit the form with id "([^"]*)"$/
      */
-    public function iSubmitTheFormWithId($arg)
+    public function iSubmitTheFormWithId($element)
     {
-        $node = $this->getSession()->getPage()->find('css', $arg);
-        if($node) {
-            $this->getSession()->executeScript("jQuery('$arg').submit();");
-        } else {
-            throw new Exception('Element not found');
-        }
+        $script = sprintf( 'jQuery("%s").submit();', $element);
+        $this->executeScript($element, $script);
     }
 
     /**
      *
      * @Given /^I use jquery to click on element "([^"]*)"$/
      */
-    public function iUseJqueryToClickOnElement($arg)
+    public function iUseJqueryToClickOnElement($element)
     {
-        $node = $this->getSession()->getPage()->find('css', $arg);
-        if($node) {
-            $this->getSession()->executeScript("jQuery('$arg').click();");
-        } else {
-            throw new Exception('Element not found');
-        }
+        $script = sprintf( 'jQuery("%s").click();', $element);
+        $this->executeScript($element, $script);
     }
 
     /**
      * @Given I use jquery to fill element :field with value :value
      */
-    public function iUseJqueryToFillElementWithValue($field, $value)
+    public function iUseJqueryToFillElementWithValue($element, $value)
     {
-        $node = $this->getSession()->getPage()->find('css', $field);
-        if($node) {
-            $this->getSession()->executeScript("jQuery(\"" .$field . "\").val('" . $value . "').click().change();");
-        } else {
-            throw new Exception('Element not found: ' . "jQuery(\"" .$field . "\").val('" . $value . "').click().change();");
-        }
+        $script = sprintf( 'jQuery("%s").val("%s").change();', $element, $value);
+        $this->executeScript($element, $script);
     }
 
     /**
@@ -482,12 +470,8 @@ class FeatureContext extends MinkContext
      */
     public function iUseJqueryToClickInElement($field)
     {
-        $node = $this->getSession()->getPage()->find('css', $field);
-        if($node) {
-            $this->getSession()->executeScript("jQuery(\"" . $field . "\").click();");
-        } else {
-            throw new Exception('Element not found: ' . "jQuery(\"" . $field . "\").click();");
-        }
+        $script = sprintf( 'jQuery("%s").click();', $field);
+        $this->executeScript($field, $script);
     }
 
     /**
@@ -495,40 +479,27 @@ class FeatureContext extends MinkContext
      */
     public function iUseJqueryToFocusInElement($field)
     {
-        $node = $this->getSession()->getPage()->find('css', $field);
-        if($node) {
-            $this->getSession()->executeScript("jQuery(\"" . $field . "\").focus();");
-        } else {
-            throw new Exception('Element not found: ' . "jQuery(\"" . $field . "\").focus();");
-        }
+        $script = sprintf( 'jQuery("%s").click();', $field);
+        $this->executeScript($field, $script);
     }
 
     /**
      * @Given I use jquery to fill element :field with a random email
      */
-    public function iUseJqueryToFillElementWithARandomEmail($field)
+    public function iUseJqueryToFillElementWithARandomEmail($element)
     {
-        $node = $this->getSession()->getPage()->find('css', $field);
-
         $value = $this->randomEmail();
 
-        if($node) {
-            $this->getSession()->executeScript("jQuery(\"" .$field . "\").val('" . $value . "').click().change();");
-        } else {
-            throw new Exception('Element not found: ' . "jQuery(\"" .$field . "\").val('" . $value . "').click().change();");
-        }
+        $script = sprintf( 'jQuery("%s").val("%s").change();', $element, $value);
+        $this->executeScript($element, $script);
     }
     /**
      * @Given I use jquery to set :html to element :field with value :value
      */
-    public function iUseJqueryToSetToElementWithValue($html, $field, $value)
+    public function iUseJqueryToSetToElementWithValue($html, $element, $value)
     {
-        $node = $this->getSession()->getPage()->find('css', $field);
-        if($node) {
-            $this->getSession()->executeScript("jQuery(\"" . $field . "\").html(\"" . $html . "\").val(\"" . $value . "\").click().change();");
-        } else {
-            throw new Exception('Element not found: ' . "jQuery(\"" . $field . "\").html('" . $html . "').val(\"" . $value . "\").click().change();");
-        }
+        $script = sprintf( 'jQuery("%s").html("%s").val("%s").change();', $element, $html, $value);
+        $this->executeScript($element, $script);
     }
 
     /**
@@ -566,27 +537,10 @@ class FeatureContext extends MinkContext
     /**
      * @Given I check if card brand is selected in element :field
      */
-    public function iCheckIfCardBrandIsSelectedInElement($field)
+    public function iCheckIfCardBrandIsSelectedInElement($element)
     {
-        $node = $this->getSession()->getPage()->find('css', $field);
-        if($node) {
-            $this->getSession()->executeScript("jQuery(\"" . $field . "\").attr('style') == 'filter: none;'");
-        } else {
-            throw new Exception('Element not found: ' . "jQuery(\"" . $field . "\").attr('style') == 'filter: none;'");
-        }
-    }
-
-    /**
-     * @Given I use jquery for submit the element :field
-     */
-    public function iUseJqueryForSubmit($field)
-    {
-        $node = $this->getSession()->getPage()->find('css', $field);
-        if($node) {
-            $this->getSession()->executeScript("jQuery(\"" . $field . "\").submit();");
-        } else {
-            throw new Exception('Element not found: ' . "jQuery(\"" . $field . "\").submit();");
-        }
+        $script = sprintf( "jQuery('%s').attr('style') == 'filter: none;';", $element);
+        $this->executeScript($element, $script);
     }
 
     /**
@@ -600,5 +554,16 @@ class FeatureContext extends MinkContext
         } else {
             throw new Exception('Element not found: ' .  $element);
         }
+    }
+
+    private function executeScript($field, $script)
+    {
+        $node = $this->getSession()->getPage()->find('css', $field);
+
+        if(!$node) {
+            throw new Exception('Element not found: ' . $script);
+        }
+
+        $this->getSession()->executeScript($script);
     }
 }
