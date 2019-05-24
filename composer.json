@@ -1,7 +1,7 @@
 {
     "name": "mundipagg/ecommerce-test-package",
     "license": "MIT",
-    "version": "1.0.1-dev",
+    "version": "1.0.1",
     "description": "A e-commerce test suite for all Mundipagg e-commerce modules",
     "require": {
         "behat/behat": "^3.5",
@@ -15,11 +15,6 @@
             "url": "https://github.com/aitboudad/FriendlyContexts.git"
         }
     ],
-    "autoload": {
-        "psr-4": {
-            "Mundipagg\\TestPackage\\": "src/"
-        }
-    },
     "autoload": {
         "psr-4": {
             "Mundipagg\\Features\\": "features"
