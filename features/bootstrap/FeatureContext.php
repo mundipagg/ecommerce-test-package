@@ -58,7 +58,7 @@ class FeatureContext extends MinkContext
     public function beforeScenario($event)
     {
         if ($event->getScenario()->hasTag('smartStep')) {
-            return;
+            die();
         }
 
         $this->scenarioTokens = null;
@@ -157,7 +157,6 @@ class FeatureContext extends MinkContext
             "Timeout: $wait seconds."
         );
     }
-
 
     /**
      *
@@ -394,8 +393,13 @@ class FeatureContext extends MinkContext
     {
         $field = $this->replacePlaceholdersByTokens($field);
         $field = $this->fixStepArgument($field);
-        $value = rand(900000, 9999999) . "@test.com";
+        $value = $this->randomEmail();
         $this->getSession()->getPage()->fillField($field, $value);
+    }
+
+    public function randomEmail()
+    {
+        return rand(900000, 99999999) . "@test.com";
     }
 
     /**
@@ -436,28 +440,66 @@ class FeatureContext extends MinkContext
      *
      * @Given /^I submit the form with id "([^"]*)"$/
      */
-    public function iSubmitTheFormWithId($arg)
+    public function iSubmitTheFormWithId($element)
     {
-        $node = $this->getSession()->getPage()->find('css', $arg);
-        if($node) {
-            $this->getSession()->executeScript("jQuery('$arg').submit();");
-        } else {
-            throw new Exception('Element not found');
-        }
+        $script = sprintf('jQuery("%s").submit();', $element);
+        $this->executeScript($element, $script);
     }
 
     /**
      *
      * @Given /^I use jquery to click on element "([^"]*)"$/
      */
-    public function iUseJqueryToClickOnElement($arg)
+    public function iUseJqueryToClickOnElement($element)
     {
-        $node = $this->getSession()->getPage()->find('css', $arg);
-        if($node) {
-            $this->getSession()->executeScript("jQuery('$arg').click();");
-        } else {
-            throw new Exception('Element not found');
-        }
+        $script = sprintf('jQuery("%s").click();', $element);
+        $this->executeScript($element, $script);
+    }
+
+    /**
+     * @Given I use jquery to fill element :field with value :value
+     */
+    public function iUseJqueryToFillElementWithValue($element, $value)
+    {
+        $script = sprintf('jQuery("%s").val("%s").change();', $element, $value);
+        $this->executeScript($element, $script);
+    }
+
+    /**
+     * @Given I use jquery to click in element :field
+     */
+    public function iUseJqueryToClickInElement($field)
+    {
+        $script = sprintf('jQuery("%s").click();', $field);
+        $this->executeScript($field, $script);
+    }
+
+    /**
+     * @Given I use jquery to focus in element :field
+     */
+    public function iUseJqueryToFocusInElement($field)
+    {
+        $script = sprintf('jQuery("%s").click();', $field);
+        $this->executeScript($field, $script);
+    }
+
+    /**
+     * @Given I use jquery to fill element :field with a random email
+     */
+    public function iUseJqueryToFillElementWithARandomEmail($element)
+    {
+        $value = $this->randomEmail();
+
+        $script = sprintf('jQuery("%s").val("%s").change();', $element, $value);
+        $this->executeScript($element, $script);
+    }
+    /**
+     * @Given I use jquery to set :html to element :field with value :value
+     */
+    public function iUseJqueryToSetToElementWithValue($html, $element, $value)
+    {
+        $script = sprintf('jQuery("%s").html("%s").val("%s").change();', $element, $html, $value);
+        $this->executeScript($element, $script);
     }
 
     /**
@@ -467,7 +509,6 @@ class FeatureContext extends MinkContext
     public function newSession()
     {
         $this->getSession()->reset();
-        //throw new Exception("as");
     }
 
     /**
@@ -492,5 +533,36 @@ class FeatureContext extends MinkContext
         fclose($file);
     }
 
+    /**
+     * @Given I check if card brand is selected in element :field
+     */
+    public function iCheckIfCardBrandIsSelectedInElement($element)
+    {
+        $script = sprintf( "jQuery('%s').attr('style') == 'filter: none;';", $element);
+        $this->executeScript($element, $script);
+    }
 
+    /**
+     * @Given I check if element :element exists
+     */
+    public function iCheckIfElementExists($element)
+    {
+        $node = $this->getSession()->getPage()->find('css', $element);
+        if($node) {
+            return true;
+        } else {
+            throw new Exception('Element not found: ' .  $element);
+        }
+    }
+
+    private function executeScript($field, $script)
+    {
+        $node = $this->getSession()->getPage()->find('css', $field);
+
+        if(!$node) {
+            throw new Exception('Element not found: ' . $script);
+        }
+
+        $this->getSession()->executeScript($script);
+    }
 }
