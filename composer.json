@@ -17,8 +17,12 @@
     ],
     "autoload": {
         "psr-4": {
+            "Mundipagg\\TestPackage\\": "src/"
+        }
+    },
+    "autoload": {
+        "psr-4": {
             "Mundipagg\\Features\\": "features"
         }
     }
-
 }
