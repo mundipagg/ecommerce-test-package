@@ -1,5 +1,7 @@
 {
     "name": "mundipagg/ecommerce-test-package",
+    "license": "MIT",
+    "version": "1.0.0",
     "description": "A e-commerce test suite for all Mundipagg e-commerce modules",
     "require": {
         "behat/behat": "^3.5",
