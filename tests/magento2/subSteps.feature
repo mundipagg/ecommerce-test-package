@@ -3,7 +3,8 @@ Feature: Substeps
   #I go to product page
   @javascript @smartStep
   Scenario: I go to product page
-    Given I am on "/fusion-backpack.html"
+    Given I wait for 1 seconds
+    And I am on "/fusion-backpack.html"
     And I wait for text "add to cart" to appear, for 10 seconds
 
   #I click on add to cart button
@@ -22,6 +23,7 @@ Feature: Substeps
   @javascript @smartStep
   Scenario: I fill user form data
     Given I use jquery to fill element "#customer-email" with a random email
+    And I wait for 1 seconds
     And I wait for text "First Name" to appear, for 10 seconds
     And I use jquery to fill element "input[name='firstname']" with value "Test"
     And I use jquery to fill element "input[name='lastname']" with value "Test"
@@ -41,14 +43,16 @@ Feature: Substeps
   #I go to checkout page
   @javascript @smartStep
   Scenario: I go to checkout page
-    Given I use jquery to click in element ".button.action.continue.primary"
+    Given I wait for 1 seconds
+    And I use jquery to click in element ".button.action.continue.primary"
     Then I wait for text "Mundipagg" to appear, for 10 seconds
 
   #I select Mundipagg credit card
   @javascript @smartStep
   Scenario: I select Mundipagg credit card
-    Given I use jquery to click in element "#mundipagg_creditcard"
-    Then I wait for text "Month" to appear, for 10 seconds
+    Given I wait for 5 seconds
+    And I use jquery to click in element "#mundipagg_creditcard"
+    And I check if element "#creditCardPlaceOrder" exists
 
   #I select Mundipagg boleto
   @javascript @smartStep
@@ -61,7 +65,6 @@ Feature: Substeps
   Scenario: I fill credit card form data
     Given I use jquery to fill element "input[name='payment[cc_number]']" with value "4299742836791151"
     And I use jquery to fill element "input[name='payment[cc_owner]']" with value "Test Name"
-    And I wait for text "Month" to appear, for 10 seconds
     And I use jquery to set "<option value='12'>12 - December</option>" to element "select[name='payment[cc_exp_month]']" with value "12"
     And I use jquery to set "<option value='2029'>2029</option>" to element "select[name='payment[cc_exp_year]']" with value "2029"
     And I use jquery to set "<option value='2' interest='0'>2x of $32.00 without interest (Total: $64.00)</option>" to element "select[name='payment[cc_installments]']" with value "2"
@@ -76,7 +79,7 @@ Feature: Substeps
   #I click in credit card place order button
   @javascript @smartStep
   Scenario: I click in credit card place order button
-    Given I wait for 1 seconds
+    Given I wait for 2 seconds
     Then I use jquery to click in element "#creditCardPlaceOrder"
 
   #I click in boleto place order button
@@ -88,5 +91,6 @@ Feature: Substeps
   #I check if order was placed
   @javascript @smartStep
   Scenario: I check if order was placed
-    Given I wait for text "Thank" to appear, for 10 seconds
-    Then I wait for text "You" to appear, for 10 seconds
+    Given I wait for 1 seconds
+    And I wait for text "order" to appear, for 10 seconds
+    Given I wait for 5 seconds

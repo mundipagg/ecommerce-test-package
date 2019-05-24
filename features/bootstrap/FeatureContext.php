@@ -588,4 +588,17 @@ class FeatureContext extends MinkContext
             throw new Exception('Element not found: ' . "jQuery(\"" . $field . "\").submit();");
         }
     }
+
+    /**
+     * @Given I check if element :element exists
+     */
+    public function iCheckIfElementExists($element)
+    {
+        $node = $this->getSession()->getPage()->find('css', $element);
+        if($node) {
+            return true;
+        } else {
+            throw new Exception('Element not found: ' .  $element);
+        }
+    }
 }
