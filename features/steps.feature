@@ -16,6 +16,11 @@ Feature: Steps
   Scenario: I fill user data
     Given I fill user form data
 
+  #I fill user data without taxvat
+  @javascript @smartStep
+  Scenario: I fill user data without taxvat
+    Given I fill user form data without taxvat
+
   #I go to checkout
   @javascript @smartStep
   Scenario: I go to checkout
@@ -53,6 +58,12 @@ Feature: Steps
   Scenario: I place order with credit card
     Given I click in credit card place order button
     And I check if order was placed
+
+  #I place order with credit card and get error
+  @javascript @smartStep
+  Scenario: I place order with credit card and get error
+    Given I click in credit card place order button
+    And I check if error was dispatched
 
   #I place order with boleto
   @javascript @smartStep
