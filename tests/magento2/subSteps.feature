@@ -41,6 +41,27 @@ Feature: Substeps
     And I use jquery to click in element "input[name='ko_unique_1']"
     Then I use jquery to set "<option selected='selected' data-title='Rio de Janeiro' value='502'>Rio de Janeiro</option>" to element "select[name='region_id']" with value "502"
 
+
+   #I fill user form data without taxvat
+  @javascript @smartStep
+  Scenario: I fill user form data without taxvat
+    Given I use jquery to fill element "#customer-email" with a random email
+    And I wait for 5 seconds
+    And I wait for text "First Name" to appear, for 10 seconds
+    And I use jquery to fill element "input[name='firstname']" with value "Test"
+    And I use jquery to fill element "input[name='lastname']" with value "Test"
+    And I use jquery to fill element "input[name='street[0]']" with value "Rua test"
+    And I use jquery to fill element "input[name='street[1]']" with value "Número test"
+    And I use jquery to fill element "input[name='street[2]']" with value "Bairro test"
+    And I use jquery to fill element "input[name='city']" with value "City test"
+    And I use jquery to set "<option selected='selected' data-title='Brazil' value='BR'>Brazil</option>" to element "select[name='country_id']" with value "BR"
+    And I use jquery to fill element "select[name='region_id']" with value "502"
+    And I use jquery to fill element "input[name='postcode']" with value "69152055"
+    And I use jquery to fill element "input[name='telephone']" with value "2122222222"
+    And I wait for 1 seconds
+    And I use jquery to click in element "input[name='ko_unique_1']"
+    Then I use jquery to set "<option selected='selected' data-title='Rio de Janeiro' value='502'>Rio de Janeiro</option>" to element "select[name='region_id']" with value "502"
+
   #I go to checkout page
   @javascript @smartStep
   Scenario: I go to checkout page
@@ -126,6 +147,13 @@ Feature: Substeps
   Scenario: I check if order was placed
     Given I wait for 10 seconds
     And I wait for text "order" to appear, for 20 seconds
+    And I wait for 5 seconds
+
+  #I check if error was dispatched
+  @javascript @smartStep
+  Scenario: I check if error was dispatched
+    Given I wait for 2 seconds
+    And I wait for element ".message-error" to appear, for 20 seconds
     And I wait for 5 seconds
 
   #I finish
