@@ -133,21 +133,13 @@ Feature: Substeps
   #I click in boleto credit card place order button
   @javascript @smartStep
   Scenario: I click in boleto credit card place order button
-    Given I wait for 1 seconds
+    Given I wait for 2 seconds
     Then I use jquery to click in element "#boletoCreditCardPlaceOrder"
 
-  #I check if has a link to boleto
   @javascript @smartStep
-  Scenario: I check if has a link to boleto
-    Given I wait for 2 seconds
-    And I wait for element "#mundipagg-link-boleto" to appear
-
-  #I check if order was placed
-  @javascript @smartStep
-  Scenario: I check if order was placed
+  Scenario: I check order creation
     Given I wait for 10 seconds
-    And I wait for text "order" to appear, for 20 seconds
-    And I wait for 5 seconds
+    And I wait for text "order" to appear, for 30 seconds
 
   #I check if error was dispatched
   @javascript @smartStep
@@ -155,6 +147,73 @@ Feature: Substeps
     Given I wait for 2 seconds
     And I wait for element ".message-error" to appear, for 20 seconds
     And I wait for 5 seconds
+
+  #I go to registration page
+  @javascript @smartStep
+  Scenario: I go to registration page
+    Given I am on "/customer/account/create/"
+    And I wait for text "Create New Customer Account" to appear, for 20 seconds
+
+  #I fill the registration form
+  @javascript @smartStep
+  Scenario: I fill the registration form
+    Given I use jquery to fill element "input[name='firstname']" with value "Test"
+    And I use jquery to fill element "input[name='lastname']" with value "Test"
+    And I use jquery to fill element "#taxvat" with value "16674352306"
+    And I use jquery to fill element "#email_address" with a random email
+    And I use jquery to fill element "#password" with value "@teste123"
+    And I use jquery to fill element "#password-confirmation" with value "@teste123"
+    And I use jquery to click in element "button[title='Create an Account']"
+    And I wait for text "Thank you for registering" to appear, for 240 seconds
+
+  #I go to address page
+  @javascript @smartStep
+  Scenario: I go to address page
+    Given I am on "/customer/address/edit/"
+    And I wait for text "Add New Address" to appear, for 20 seconds
+
+  #I fill the address form
+  @javascript @smartStep
+  Scenario: I fill the address form
+    Given I use jquery to fill element "#firstname" with value "Test"
+    And I use jquery to fill element "#lastname" with value "Test"
+    And I use jquery to fill element "#telephone" with value "(21) 2555-5555"
+    And I use jquery to fill element "#street_1" with value "Rua A"
+    And I use jquery to fill element "#street_2" with value "Número"
+    And I use jquery to fill element "#street_3" with value "Bairro A"
+    And I use jquery to fill element "#street_4" with value "Complemento 101"
+    And I use jquery to fill element "#vat_id" with value "16674352306"
+    And I use jquery to fill element "#city" with value "Rio de Janeiro"
+    And I use jquery to fill element "#zip" with value "95041210"
+    And I use jquery to set "<option selected='selected' data-title='Brazil' value='BR'>Brazil</option>" to element "#country" with value "BR"
+    And I use jquery to set "<option selected='selected' data-title='Rio de Janeiro' value='502'>Rio de Janeiro</option>" to element "#region_id" with value "502"
+    And I use jquery to click in element "button[title='Save Address']"
+    And I wait for text "You Saved The Address" to appear, for 20 seconds
+
+  #I go to shipping page
+  @javascript @smartStep
+  Scenario: I go to shipping page
+    Given I am on "/checkout/#shipping"
+    And I wait for text "Flat Rate" to appear, for 20 seconds
+    And I use jquery to click in element "input[name='ko_unique_1']"
+    And I use jquery to click in element ".continue"
+    And I wait for 10 seconds
+
+  #I select the saved card option
+  @javascript @smartStep
+  Scenario: I select the saved card option
+    Given I use jquery to click on element "#creditcard-save"
+
+  #I select a installment option
+  @javascript @smartStep
+  Scenario: I select a installment option
+    Given I use jquery to set "<option value='1' interest='0'>1x of $64.00 without interest (Total: $64.00)</option>" to element "select[name='payment[cc_installments]']" with value "1"
+    And I wait for 1 seconds
+
+  #I check the boleto print button
+  @javascript @smartStep
+  Scenario: I check the boleto print button
+    And I wait for 1 seconds
 
   #I finish
   @javascript @smartStep
