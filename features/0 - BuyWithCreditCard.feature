@@ -14,5 +14,12 @@ Feature: Create order with credit card
     And I fill credit card data
     And I place order with credit card
 
-
-
+  @javascript
+  Scenario: Should block order because does not have tax vat
+    Given I add a product to cart
+    And I go to user form
+    And I fill user data without taxvat
+    And I go to checkout
+    And I select credit card payment method
+    And I fill credit card data
+    And I place order with credit card and get error

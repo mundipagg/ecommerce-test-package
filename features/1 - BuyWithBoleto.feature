@@ -12,6 +12,3 @@ Feature: Create order with boleto
     And I go to checkout
     And I select boleto payment method
     And I place order with boleto
-
-
-
