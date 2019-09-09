@@ -3,6 +3,11 @@
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Mink\Exception\ResponseTextException;
 use Behat\MinkExtension\Context\MinkContext;
+use Dotenv\Dotenv;
+use Dotenv\Environment\Adapter\EnvConstAdapter;
+use Dotenv\Environment\Adapter\PutenvAdapter;
+use Dotenv\Environment\DotenvFactory;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 
 /**
  * Features context.
@@ -13,10 +18,41 @@ class FeatureContext extends MinkContext
      *
      * @var Behat\Gherkin\Node\StepNode
      */
+    private $dotenv;
+    protected $baseUrl;
     private $currentStep = null;
     private $scenarioTokens = null;
     private static $featureHash = null;
     private $screenshotDir = DIRECTORY_SEPARATOR . 'tmp';
+
+    public function __construct()
+    {
+
+        $factory = new DotenvFactory([
+            new EnvConstAdapter(),
+            new PutenvAdapter(),
+        ]);
+
+        $this->dotenv = Dotenv::create(
+            __DIR__ . '/../../',
+            null,
+            $factory
+        );
+        $this->dotenv->load();
+        $this->baseUrl = $_ENV['BASE_URL'];
+    }
+
+    /** @BeforeScenario */
+    public function gatherContexts(BeforeScenarioScope $scope)
+    {
+        $environment = $scope->getEnvironment();
+
+        foreach ($environment->getContexts() as $context) {
+            if ($context instanceof \Behat\MinkExtension\Context\RawMinkContext) {
+                $context->setMinkParameter('base_url', $this->baseUrl);
+            }
+        }
+    }
 
     /**
      *
