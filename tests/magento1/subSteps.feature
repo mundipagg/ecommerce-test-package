@@ -76,9 +76,9 @@ Feature: Substeps
   #I select Mundipagg credit card
   @javascript @smartStep
   Scenario: I select Mundipagg credit card
-    Given I wait for 5 seconds
+    Given I wait for 3 seconds
     And I use jquery to click in element "#p_method_paymentmodule_creditcard"
-    Then I wait for text "Card number" to appear, for 20 seconds
+    Then I wait for text "Installments" to appear, for 20 seconds
 
   #I select Mundipagg boleto
   @javascript @smartStep
@@ -89,47 +89,47 @@ Feature: Substeps
   #I select Mundipagg boleto credit card
   @javascript @smartStep
   Scenario: I select Mundipagg boleto credit card
-    Given I use jquery to click in element "#mundipagg_billet_creditcard"
+    Given I use jquery to click in element "#p_method_paymentmodule_boletocc"
     Then I wait for 1 seconds
 
   #I fill credit card form data
   @javascript @smartStep
   Scenario: I fill credit card form data
     Given I use jquery to fill element "#paymentmodule_creditcard_creditcard_1_mundicheckout-number" with value "4299742836791151"
-    And I use jquery to fill element "#paymentmodule_creditcard_creditcard_1_mundicheckout-holdername" with value "Test Name"
+    And I use jquery to focus out element "#paymentmodule_creditcard_creditcard_1_mundicheckout-number"
     And I use jquery to set "<option value='12'>12 - December</option>" to element "#paymentmodule_creditcard_creditcard_1_mundicheckout-expmonth" with value "12"
     And I use jquery to set "<option value='2029'>2029</option>" to element "#paymentmodule_creditcard_creditcard_1_mundicheckout-expyear" with value "2029"
-    And I use jquery to set "<option value='2' interest='0'>2x of $32.00 without interest (Total: $64.00)</option>" to element "#paymentmodule_creditcard_creditcard_1_mundicheckout-creditCard-installments" with value "2"
     And I use jquery to fill element "#paymentmodule_creditcard_creditcard_1_mundicheckout-cvv" with value "123"
-    And I use jquery to click in element "#payment-buttons-container button.button"
-    Then I wait for 3 seconds
+    And I use jquery to fill element "#paymentmodule_creditcard_creditcard_1_mundicheckout-holdername" with value "Test Name"
+    And I use jquery to fill element "#paymentmodule_creditcard_creditcard_1_mundicheckout-creditCard-installments" with value "1"
+    And I use jquery to click in element "#payment-buttons-container button"
 
   #I fill boleto credit card form data
   @javascript @smartStep
   Scenario: I fill boleto credit card form data
-    Given I use jquery to fill element "input[name='payment[cc_billet_amount]']" with value "20"
+    Given I use jquery to fill element "#paymentmodule_boletocc_boleto_1_value" with value "20"
     And I wait for 3 seconds
-    And I use jquery to fill element "input[name='payment[cc_number]']" with value "4299742836791151"
-    And I use jquery to fill element "input[name='payment[cc_owner]']" with value "Test Name"
-    And I use jquery to set "<option value='12'>12 - December</option>" to element "select[name='payment[cc_exp_month]']" with value "12"
-    And I use jquery to set "<option value='2029'>2029</option>" to element "select[name='payment[cc_exp_year]']" with value "2029"
-    And I use jquery to set "<option value='2' interest='0'>2x of $22.00 without interest (Total: $44.00)</option>" to element "select[name='payment[cc_installments]']" with value "2"
-    And I use jquery to fill element "input[name='payment[cc_cid]']" with value "123"
+    And I use jquery to fill element "#paymentmodule_boletocc_creditcard_1_mundicheckout-number" with value "4299742836791151"
+    And I use jquery to fill element "#paymentmodule_boletocc_creditcard_1_mundicheckout-holdername" with value "Test Name"
+    And I use jquery to set "<option value='12'>12 - December</option>" to element "#paymentmodule_boletocc_creditcard_1_mundicheckout-expmonth" with value "12"
+    And I use jquery to set "<option value='2029'>2029</option>" to element "#paymentmodule_boletocc_creditcard_1_mundicheckout-expyear" with value "2029"
+    And I use jquery to set "<option value='2' interest='0'>2x of $22.00 without interest (Total: $44.00)</option>" to element "#paymentmodule_boletocc_creditcard_1_mundicheckout-creditCard-installments" with value "1"
+    And I use jquery to fill element "#paymentmodule_boletocc_creditcard_1_mundicheckout-cvv" with value "123"
     Then I wait for 3 seconds
+
+  #I click in credit card place order button
+  @javascript @smartStep
+  Scenario: I click in credit card place order button
+    Given I use jquery to click in element "#payment-buttons-container button"
+    And I wait for 1 seconds
+    And I wait for text "Subtotal" to appear, for 10 seconds
+    And I use jquery to click in element ".button.btn-checkout"
 
   #I check if card brand is selected
   @javascript @smartStep
   Scenario: I check if card brand is selected
     And I wait for 1 seconds
     #Given I check if card brand is selected in element ".visa"
-
-  #I click in credit card place order button
-  @javascript @smartStep
-  Scenario: I click in credit card place order button
-    Given I wait for 3 seconds
-
-    And I wait for 1 seconds
-    #And I use jquery to click in element "#review-buttons-container button"
 
   #I click in boleto place order button
   @javascript @smartStep
@@ -141,13 +141,12 @@ Feature: Substeps
   @javascript @smartStep
   Scenario: I click in boleto credit card place order button
     Given I wait for 2 seconds
-    Then I use jquery to click in element "#boletoCreditCardPlaceOrder"
+    Then I use jquery to click in element "#payment-buttons-container button.button"
 
   @javascript @smartStep
   Scenario: I check order creation
-    Given I wait for 10 seconds
-    #And I wait for text "Grand Total" to appear, for 30 seconds
-    #Then I use jquery to click in element ".button.btn-checkout"
+    Given I wait for 2 seconds
+    And I wait for text "THANK YOU " to appear, for 30 seconds
 
   #I check if error was dispatched
   @javascript @smartStep
@@ -160,7 +159,7 @@ Feature: Substeps
   @javascript @smartStep
   Scenario: I go to registration page
     Given I am on "/customer/account/create/"
-    And I wait for text "Create New Customer Account" to appear, for 20 seconds
+    And I wait for text "Create An Account" to appear, for 20 seconds
 
   #I fill the registration form
   @javascript @smartStep
@@ -170,8 +169,8 @@ Feature: Substeps
     And I use jquery to fill element "#taxvat" with value "16674352306"
     And I use jquery to fill element "#email_address" with a random email
     And I use jquery to fill element "#password" with value "@teste123"
-    And I use jquery to fill element "#password-confirmation" with value "@teste123"
-    And I use jquery to click in element "button[title='Create an Account']"
+    And I use jquery to fill element "input[name='confirmation']" with value "@teste123"
+    And I use jquery to click in element "button[title='Register']"
     And I wait for text "Thank you for registering" to appear, for 240 seconds
 
   #I go to address page
@@ -194,28 +193,38 @@ Feature: Substeps
     And I use jquery to fill element "#city" with value "Rio de Janeiro"
     And I use jquery to fill element "#zip" with value "95041210"
     And I use jquery to set "<option selected='selected' data-title='Brazil' value='BR'>Brazil</option>" to element "#country" with value "BR"
-    And I use jquery to set "<option selected='selected' data-title='Rio de Janeiro' value='502'>Rio de Janeiro</option>" to element "#region_id" with value "502"
+    And I use jquery to set "<option value='485'>Rio de Janeiro</option>" to element "#region_id" with value "485"
     And I use jquery to click in element "button[title='Save Address']"
-    And I wait for text "You Saved The Address" to appear, for 20 seconds
+    And I wait for text "The address has been saved" to appear, for 20 seconds
 
   #I go to shipping page
   @javascript @smartStep
   Scenario: I go to shipping page
+    Given I select the same shipping address
+
+  #I select the same shipping address
+  @javascript @smartStep
+  Scenario: I select the same shipping address
     Given I am on "/checkout/#shipping"
-    And I wait for text "Flat Rate" to appear, for 20 seconds
-    And I use jquery to click in element "input[name='ko_unique_1']"
-    And I use jquery to click in element ".continue"
-    And I wait for 10 seconds
+    And I wait for 3 seconds
+    And I use jquery to click in element "#billing-buttons-container button"
+    And I wait for 3 seconds
+    And I use jquery to click in element ".button.validation-passed"
+    And I wait for text "Flat" to appear, for 25 seconds
+    And I use jquery to click in element "#s_method_flatrate_flatrate"
+    And I wait for 5 seconds
+    And I use jquery to click in element "#shipping-method-buttons-container button"
+    And I wait for 5 seconds
 
   #I select the saved card option
   @javascript @smartStep
   Scenario: I select the saved card option
-    Given I use jquery to click on element "#creditcard-save"
+    Given I use jquery to click on element "#paymentmodule_creditcard_creditcard_1_mundicheckout-save-credit-card"
 
   #I select a installment option
   @javascript @smartStep
   Scenario: I select a installment option
-    Given I use jquery to set "<option value='1' interest='0'>1x of $64.00 without interest (Total: $64.00)</option>" to element "select[name='payment[cc_installments]']" with value "1"
+    Given I use jquery to fill element "#paymentmodule_creditcard_creditcard_1_mundicheckout-creditCard-installments" with value "1"
     And I wait for 1 seconds
 
   #I check the boleto print button

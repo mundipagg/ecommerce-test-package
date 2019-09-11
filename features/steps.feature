@@ -95,4 +95,3 @@ Feature: Steps
   @javascript @smartStep
   Scenario: I select a saved credit card
     Given I select a installment option
-

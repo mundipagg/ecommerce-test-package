@@ -520,6 +520,15 @@ class FeatureContext extends MinkContext
     }
 
     /**
+     * @Given I use jquery to focus out element :field
+     */
+    public function iUseJqueryToFocusOut($field)
+    {
+        $script = sprintf('jQuery("%s").focusout();', $field);
+        $this->executeScript($field, $script);
+    }
+
+    /**
      * @Given I use jquery to fill element :field with a random email
      */
     public function iUseJqueryToFillElementWithARandomEmail($element)
