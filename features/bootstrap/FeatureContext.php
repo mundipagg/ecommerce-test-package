@@ -520,6 +520,15 @@ class FeatureContext extends MinkContext
     }
 
     /**
+     * @Given I use jquery to focus out element :field
+     */
+    public function iUseJqueryToFocusOut($field)
+    {
+        $script = sprintf('jQuery("%s").focusout();', $field);
+        $this->executeScript($field, $script);
+    }
+
+    /**
      * @Given I use jquery to fill element :field with a random email
      */
     public function iUseJqueryToFillElementWithARandomEmail($element)
@@ -601,4 +610,17 @@ class FeatureContext extends MinkContext
 
         $this->getSession()->executeScript($script);
     }
+
+    /**
+     * @Given I click in :arg1 by container
+     */
+    public function iClickInByContainer1($arg1)
+    {
+        $script = "jQuery('#payment-buttons-container').children('button').css('border', '2px solid red')";
+        $this->executeScript($arg1, $script);
+        echo $script;
+        $script = "jQuery('#payment-buttons-container').children('button').click()";
+        $this->executeScript($arg1, $script);
+    }
+
 }

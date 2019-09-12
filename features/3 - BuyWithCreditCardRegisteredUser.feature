@@ -18,4 +18,4 @@ Feature: Create order with credit card for a registered user
     And I select the shipping method
     And I select credit card payment method
     And I select a saved credit card
-    #And I place order with credit card
+    And I place order with credit card
