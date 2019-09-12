@@ -51,7 +51,6 @@ Feature: Steps
   @javascript @smartStep
   Scenario: I fill boleto credit card data
     Given I fill boleto credit card form data
-    Then I check if card brand is selected
 
   #I place order with credit card
   @javascript @smartStep
@@ -62,13 +61,14 @@ Feature: Steps
   #I place order with credit card and get error
   @javascript @smartStep
   Scenario: I place order with credit card and get error
-    Given I click in credit card place order button
+    Given I click in go to order review button
     And I check if error was dispatched
 
   #I place order with boleto
   @javascript @smartStep
   Scenario: I place order with boleto
-    Given I click in boleto place order button
+    Given I click in go to order review button
+    And I click in boleto place order button
     And I check order creation
     And I check the boleto print button
 
@@ -77,6 +77,7 @@ Feature: Steps
   Scenario: I place order with boleto credit card
     Given I click in boleto credit card place order button
     And I check order creation
+    And I check the boleto print button
 
   #I create a new user
   @javascript @smartStep
