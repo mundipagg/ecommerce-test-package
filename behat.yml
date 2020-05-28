@@ -9,6 +9,8 @@ magento2:
         javascript:
           chrome:
             api_url: "http://127.0.0.1:9222"
+            socket_timeout: 120
+
   suites:
     core_features:
       ##Path to core features
