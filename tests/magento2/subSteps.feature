@@ -103,7 +103,7 @@ Feature: Substeps
   #I fill boleto credit card form data
   @javascript @smartStep
   Scenario: I fill boleto credit card form data
-    Given I use jquery to fill element "input[name='payment[bcc_amount]']" with value "20,00"
+    Given I use jquery to fill element "input[name='payment[bcc_amount]']" with value "32,00"
     And I wait for 10 seconds
     And I use jquery to fill element "input[name='payment[cc_number]']" with value "4000000000000010"
     And I use jquery to fill element "input[name='payment[cc_owner]']" with value "Test Name"
@@ -203,7 +203,7 @@ Feature: Substeps
   #I select the saved card option
   @javascript @smartStep
   Scenario: I select the saved card option
-    Given I use jquery to click on element "#creditcard-save"
+    Given I use jquery to click on element ".save_this_card"
 
   #I select a installment option
   @javascript @smartStep
