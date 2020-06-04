@@ -553,7 +553,7 @@ class FeatureContext extends MinkContext
      */
     public function newSession()
     {
-        $this->getSession()->reset();
+        $this->getSession()->start();
     }
 
     /**
