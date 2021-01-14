@@ -1,11 +1,12 @@
-Feature: Create order with credit card
+Feature: Create order with boleto
 
   Background:
     Given a new session
     And I define failure screenshot dir as "./failureScreenshots"
 
   @javascript
-  Scenario: I create a credit card order
+  Scenario: I create a boleto order
+    # I add a product to cart
     Given I wait for 1 seconds
     And I am on "/index.php"
     And I wait for 2 seconds
@@ -15,10 +16,12 @@ Feature: Create order with credit card
     And I wait for text "added" to appear, for 10 seconds
     Then I wait for 3 seconds
 
-    And I am on "/checkout"
-    And I wait for text "Email" to appear, for 20 seconds
+    #  I go to user form
+    Given I am on "/checkout"
+    Then I wait for text "Email" to appear, for 20 seconds
 
-    And I use jquery to fill element "#customer-email" with a random email
+    #  I fill user data
+    Given I use jquery to fill element "#customer-email" with a random email
     And I wait for 5 seconds
     And I wait for text "First Name" to appear, for 10 seconds
     And I use jquery to fill element "input[name='firstname']" with value "Test"
@@ -36,27 +39,17 @@ Feature: Create order with credit card
     And I use jquery to click in element "input[name='ko_unique_1']"
     Then I use jquery to set "<option selected='selected' data-title='Rio de Janeiro' value='502'>Rio de Janeiro</option>" to element "select[name='region_id']" with value "502"
 
-    And I wait for 5 seconds
+    #  I go to checkout
+    Given I wait for 5 seconds
     And I use jquery to click in element ".button.action.continue.primary"
-    And I wait for text "Mundipagg" to appear, for 20 seconds
+    Then I wait for text "Mundipagg" to appear, for 20 seconds
 
-    And I wait for 5 seconds
-    And I use jquery to click in element "#mundipagg_creditcard"
-    And I check if element "#mundipagg_creditcard-submit" exists
+    #  I select boleto payment method
+    Given I use jquery to click in element "#mundipagg_billet"
+    Then I wait for 1 seconds
 
-    And I use jquery to fill element "input[name='payment[cc_number]']" with value "4000000000000010"
-    And I use jquery to fill element "input[name='payment[cc_owner]']" with value "Test Name"
-    And I use jquery to set "<option value='12'>12 - December</option>" to element "select[name='payment[cc_exp_month]']" with value "12"
-    And I use jquery to set "<option value='2029'>2029</option>" to element "select[name='payment[cc_exp_year]']" with value "2029"
-    And I use jquery to set "<option value='2' interest='0'>2x of $32.00 without interest (Total: $64.00)</option>" to element "select[name='payment[cc_installments]']" with value "2"
-    And I use jquery to fill element "input[name='payment[cc_cid]']" with value "123"
-    And I wait for 3 seconds
-
-    And I check if card brand is selected in element ".brands.visa"
-
-    And I wait for 2 seconds
-    And I use jquery to click in element "#mundipagg_creditcard-submit"
-    And I wait for 5 seconds
-
-    And I wait for 20 seconds
+    #  I place order with boleto
+    Given I wait for 1 seconds
+    Then I use jquery to click in element "#mundipagg_billet-submit"
+    Given I wait for 20 seconds
     And I wait for text "Thank you for your purchase" to appear, for 30 seconds
