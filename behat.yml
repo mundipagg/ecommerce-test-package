@@ -13,6 +13,7 @@ magento2:
           goutte: ~
         js_enabled_browser:
           chrome:
+            socket_timeout: 90
             api_url: http://localhost:9222
             validate_certificate: false
   suites:

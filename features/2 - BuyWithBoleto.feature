@@ -7,7 +7,7 @@ Feature: Create order with boleto
   @javascript
   Scenario: I create a boleto order
     # I add a product to cart
-    Given I wait for 1 seconds
+    Given I wait for 2 seconds
     And I am on "/index.php"
     And I wait for 2 seconds
     And I am on "/fusion-backpack.html"
@@ -35,21 +35,21 @@ Feature: Create order with boleto
     And I use jquery to fill element "input[name='postcode']" with value "69152055"
     And I use jquery to fill element "input[name='telephone']" with value "2122222222"
     And I use jquery to fill element "input[name='vat_id']" with value "16674352306"
-    And I wait for 1 seconds
+    And I wait for 3 seconds
     And I use jquery to click in element "input[name='ko_unique_1']"
     Then I use jquery to set "<option selected='selected' data-title='Rio de Janeiro' value='502'>Rio de Janeiro</option>" to element "select[name='region_id']" with value "502"
 
     #  I go to checkout
-    Given I wait for 5 seconds
+    Given I wait for 6 seconds
     And I use jquery to click in element ".button.action.continue.primary"
     Then I wait for text "Mundipagg" to appear, for 20 seconds
 
     #  I select boleto payment method
     Given I use jquery to click in element "#mundipagg_billet"
-    Then I wait for 1 seconds
+    Then I wait for 4 seconds
 
     #  I place order with boleto
-    Given I wait for 1 seconds
+    Given I wait for 5 seconds
     Then I use jquery to click in element "#mundipagg_billet-submit"
-    Given I wait for 20 seconds
+    Given I wait for 25 seconds
     And I wait for text "Thank you for your purchase" to appear, for 30 seconds
