@@ -45,8 +45,9 @@ Feature: Create order with boleto
     Then I wait for text "Mundipagg" to appear, for 20 seconds
 
     #  I select boleto payment method
-    Given I use jquery to click in element "#mundipagg_billet"
-    Then I wait for 4 seconds
+    And I wait for 5 seconds
+    And I use jquery to click in element "#mundipagg_billet"
+    And I wait for 4 seconds
 
     #  I place order with boleto
     Given I wait for 5 seconds
