@@ -36,7 +36,7 @@ Feature: Create order with boleto
     And I use jquery to fill element "input[name='telephone']" with value "2122222222"
     And I use jquery to fill element "input[name='vat_id']" with value "16674352306"
     And I wait for 3 seconds
-    And I use jquery to click in element "input[name='ko_unique_1']"
+    And I use jquery to click in element "input[name='ko_unique_4']"
     Then I use jquery to set "<option selected='selected' data-title='Rio de Janeiro' value='502'>Rio de Janeiro</option>" to element "select[name='region_id']" with value "502"
 
     #  I go to checkout
