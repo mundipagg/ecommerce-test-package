@@ -502,6 +502,15 @@ class FeatureContext extends MinkContext
     }
 
     /**
+     * @Given I use jquery to click in first element start with :field
+     */
+    public function iUseJqueryToClickFirstElementStartWith($field)
+    {
+        $script = sprintf('jQuery("%s")[0].click();', $field);
+        $this->executeScript($field, $script);
+    }
+
+    /**
      * @Given I use jquery to click in element :field
      */
     public function iUseJqueryToClickInElement($field)
@@ -572,6 +581,8 @@ class FeatureContext extends MinkContext
     public function screenshot($filename)
     {
         $driver =  $this->getSession()->getDriver();
+     //   $driver->maximizeWindow();
+
         $data = $driver->getScreenshot();
         $file = fopen($filename, "w");
         fwrite($file, $data);
