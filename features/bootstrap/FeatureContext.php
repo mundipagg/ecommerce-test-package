@@ -1,13 +1,18 @@
 <?php
 
-use Behat\Behat\Tester\Exception\PendingException;
+use Behat\Gherkin\Node\StepNode;
+use Behat\Mink\Exception\DriverException;
+use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\Mink\Exception\ResponseTextException;
+use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\MinkExtension\Context\MinkContext;
 use Dotenv\Dotenv;
 use Dotenv\Environment\Adapter\EnvConstAdapter;
 use Dotenv\Environment\Adapter\PutenvAdapter;
 use Dotenv\Environment\DotenvFactory;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Mundipagg\Exceptions\ElementNotFound;
+use Mundipagg\Exceptions\TimeoutException;
 
 /**
  * Features context.
@@ -15,8 +20,7 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 class FeatureContext extends MinkContext
 {
     /**
-     *
-     * @var Behat\Gherkin\Node\StepNode
+     * @var StepNode
      */
     private $dotenv;
     protected $baseUrl;
@@ -27,7 +31,6 @@ class FeatureContext extends MinkContext
 
     public function __construct()
     {
-
         $factory = new DotenvFactory([
             new EnvConstAdapter(),
             new PutenvAdapter(),
@@ -38,6 +41,7 @@ class FeatureContext extends MinkContext
             null,
             $factory
         );
+
         $this->dotenv->load();
         $this->baseUrl = $_ENV['BASE_URL'];
     }
@@ -55,9 +59,10 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     *
      * @AfterStep
-     * @param     $event
+     * @param $event
+     * @throws DriverException
+     * @throws UnsupportedDriverActionException
      */
     public function afterStepFailureScreenshot($event)
     {
@@ -66,17 +71,19 @@ class FeatureContext extends MinkContext
             if (!file_exists($this->screenshotDir)) {
                 mkdir($this->screenshotDir);
             }
+
             $filename = tempnam($this->screenshotDir, "failure_screenshoot_");
             unlink($filename);
             $filename .= ".png";
             $this->screenshot($filename);
+
             echo "saved failure screenshot to '$filename'";
         }
     }
 
     /**
-     *
      * @BeforeFeature
+     * @param $event
      */
     public static function beforeFeature($event)
     {
@@ -88,8 +95,8 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     *
      * @BeforeScenario
+     * @param $event
      */
     public function beforeScenario($event)
     {
@@ -100,25 +107,23 @@ class FeatureContext extends MinkContext
         $this->scenarioTokens = null;
         try {
             //trying to save examples to use in @smartStep
-            $this->scenarioTokens =
-                $event->getScenario()->getTokens();
-        }catch(Throwable $e) {
+            $this->scenarioTokens = $event->getScenario()->getTokens();
+        } catch (Throwable $e) {
+            //nothing
         }
     }
 
     /**
-     *
      * @BeforeStep
      */
     public function beforeStep($event)
     {
-        $this->currentStep  = $event->getStep();
+        $this->currentStep = $event->getStep();
     }
 
     /**
      * Show an animation when waiting for a step
-     *
-     * @param int   $remaning Amount in seconds remaing on wait.
+     * @param int|null $remaining Amount in seconds remaing on wait.
      * @param float $interval in seconds to update animation frame.
      */
     private function spinAnimation($remaining = null, $interval = 0.1)
@@ -127,41 +132,48 @@ class FeatureContext extends MinkContext
         $currentTime = microtime(true);
         static $lastUpdate = null;
 
-        if($frameId === null) {
+        if ($frameId === null) {
             $frameId = 0;
         }
 
-        if($lastUpdate === null) {
+        if ($lastUpdate === null) {
             $lastUpdate = $currentTime;
         }
 
-        if($currentTime - $lastUpdate < $interval) {
+        if ($currentTime - $lastUpdate < $interval) {
             return;
         }
         $lastUpdate = $currentTime;
 
-        switch($frameId) {
-            default: $frameId = 0;
-            case 0: $frame = '|';
+        switch ($frameId) {
+            default:
+                $frameId = 0;
+            case 0:
+                $frame = '|';
                 break;
-            case 1: $frame = '\\';
+            case 1:
+                $frame = '\\';
                 break;
-            case 2: $frame = '--';
+            case 2:
+                $frame = '--';
                 break;
-            case 3: $frame = '/';
+            case 3:
+                $frame = '/';
                 break;
 
         }
         $frameId++;
 
-        if($this->currentStep !== null) {
-
+        if ($this->currentStep !== null) {
             print "'" . $this->currentStep->getText() . "' - ";
         }
-        if($remaining !== null) {
+
+        if ($remaining !== null) {
             print "$remaining seconds remaining...  ";
         }
+
         print "$frame             \r";
+
         flush();
     }
 
@@ -169,34 +181,36 @@ class FeatureContext extends MinkContext
     /**
      * Based on example from http://docs.behat.org/en/v2.5/cookbook/using_spin_functions.html
      *
-     * @param  callable $lambda The callback that will be called in spin
-     * @param  int      $wait   Amount in seconds to spin timeout
+     * @param callable $lambda The callback that will be called in spin
+     * @param int $wait Amount in seconds to spin timeout
      * @return bool
      * @throws Exception
      */
     private function spin(callable $lambda, $wait = 60)
     {
         $startTime = time();
-        do{
+        do {
             try {
-                if($lambda($this)) {
+                if ($lambda($this)) {
                     return true;
                 }
-            }catch(Exception $e) {
-                //do nothing;
+            } catch (Exception $e) {
+                //nothing
             }
-            usleep(100000);
-            $this->spinAnimation($wait - (time() - $startTime));
-        }while(time() < $startTime + $wait);
 
-        throw new Exception(
-            "Timeout: $wait seconds."
+            usleep(100000);
+
+            $this->spinAnimation($wait - (time() - $startTime));
+        } while (time() < $startTime + $wait);
+
+        throw new TimeoutException(
+            "Timeout: {$wait} seconds."
         );
     }
 
     /**
-     *
      * @When /^(?:|I )click in element "(?P<element>(?:[^"]|\\")*)"$/
+     * @param $element
      */
     public function clickInElement($element)
     {
@@ -214,7 +228,6 @@ class FeatureContext extends MinkContext
 
     /**
      * Overriding fillField to make it compatible with @smartStep in Scenario Outline.
-     *
      * @param $field
      * @param $value
      */
@@ -226,7 +239,6 @@ class FeatureContext extends MinkContext
 
     /**
      * Overriding selectOption to make it compatible with @smartStep in Scenario Outline.
-     *
      * @param $select
      * @param $option
      */
@@ -238,11 +250,9 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     *
-     * @When   /^If "(?P<select>(?:[^"]|\\")*)" is present, I select "(?P<option>(?:[^"]|\\")*)" from it$/
-     * @param  $text
-     * @param  $wait
-     * @throws \Exception
+     * @When /^If "(?P<select>(?:[^"]|\\")*)" is present, I select "(?P<option>(?:[^"]|\\")*)" from it$/
+     * @param $select
+     * @param $option
      */
     public function selectIfPresent($select, $option)
     {
@@ -258,18 +268,17 @@ class FeatureContext extends MinkContext
     {
         if (is_array($this->scenarioTokens)) {
             foreach ($this->scenarioTokens as $key => $value) {
-                $element = str_replace("<$key>", $value, $element);
+                $element = str_replace("<{$key}>", $value, $element);
             }
         }
         return $element;
     }
 
     /**
-     *
-     * @When   /^(?:|I )wait for element "(?P<element>(?:[^"]|\\")*)" to appear$/
-     * @Then   /^(?:|I )should see element "(?P<element>(?:[^"]|\\")*)" appear$/
-     * @param  $element
-     * @throws \Exception
+     * @When /^(?:|I )wait for element "(?P<element>(?:[^"]|\\")*)" to appear$/
+     * @Then /^(?:|I )should see element "(?P<element>(?:[^"]|\\")*)" appear$/
+     * @param string $element
+     * @throws Exception
      */
     public function iWaitForElementToAppear($element)
     {
@@ -278,9 +287,8 @@ class FeatureContext extends MinkContext
                 try {
                     $context->assertElementOnPage($element);
                     return true;
-                }
-                catch(ResponseTextException $e) {
-                    // NOOP
+                } catch (ResponseTextException $e) {
+                    //nothing
                 }
                 return false;
             }
@@ -289,33 +297,32 @@ class FeatureContext extends MinkContext
 
     /**
      *
-     * @When   /^(?:|I )wait for element "(?P<element>(?:[^"]|\\")*)" to appear, for (?P<wait>(?:\d+)*) seconds$/
-     * @param  $element
-     * @param  $wait
-     * @throws \Exception
+     * @When /^(?:|I )wait for element "(?P<element>(?:[^"]|\\")*)" to appear, for (?P<wait>(?:\d+)*) seconds$/
+     * @param $element
+     * @param $wait
+     * @throws Exception
      */
-    public function iWaitForElementToAppearForNSeconds($element,$wait)
+    public function iWaitForElementToAppearForNSeconds($element, $wait)
     {
         $this->spin(
             function (FeatureContext $context) use ($element) {
                 try {
                     $context->assertElementOnPage($element);
                     return true;
-                }
-                catch(ResponseTextException $e) {
-                    // NOOP
+                } catch (ResponseTextException $e) {
+                    //nothing
                 }
                 return false;
-            }, $wait
+            },
+            $wait
         );
     }
 
     /**
-     *
-     * @When   /^(?:|I )wait for (?P<wait>(?:\d+)*) seconds$/
-     * @param  $element
-     * @param  $wait
-     * @throws \Exception
+     * @When /^(?:|I )wait for (?P<wait>(?:\d+)*) seconds$/
+     * @param int $wait
+     * @return int
+     * @throws Exception
      */
     public function iWaitForNSeconds($wait)
     {
@@ -323,10 +330,9 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     *
-     * @When   /^(?:|I )wait for element "(?P<element>(?:[^"]|\\")*)" to become visible$/
-     * @param  $element
-     * @throws \Exception
+     * @When /^(?:|I )wait for element "(?P<element>(?:[^"]|\\")*)" to become visible$/
+     * @param $element
+     * @throws Exception
      */
     public function iWaitForElementToBecomeVisible($element)
     {
@@ -335,6 +341,7 @@ class FeatureContext extends MinkContext
         $locator = $this->fixStepArgument($element);
         $xpath = $session->getSelectorsHandler()->selectorToXpath('css', $locator);
         $element = $this->getSession()->getPage()->find('xpath', $xpath);
+
         if (null === $element) {
             throw new \InvalidArgumentException(sprintf('Could not find element'));
         }
@@ -343,8 +350,7 @@ class FeatureContext extends MinkContext
             function () use ($element) {
                 try {
                     return $element->isVisible();
-                }
-                catch(ResponseTextException $e) {
+                } catch (ResponseTextException $e) {
                     // NOOP
                 }
                 return false;
@@ -353,8 +359,8 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     *
      * @when /^(?:|I )follow the element "(?P<element>(?:[^"]|\\")*)" href$/
+     * @param $element
      */
     public function iFollowTheElementHref($element)
     {
@@ -373,10 +379,10 @@ class FeatureContext extends MinkContext
 
     /**
      *
-     * @When   /^(?:|I )wait for text "(?P<text>(?:[^"]|\\")*)" to appear$/
-     * @Then   /^(?:|I )should see "(?P<text>(?:[^"]|\\")*)" appear$/
+     * @When /^(?:|I )wait for text "(?P<text>(?:[^"]|\\")*)" to appear$/
+     * @Then /^(?:|I )should see "(?P<text>(?:[^"]|\\")*)" appear$/
      * @param  $text
-     * @throws \Exception
+     * @throws Exception
      */
     public function iWaitForTextToAppear($text)
     {
@@ -385,8 +391,7 @@ class FeatureContext extends MinkContext
                 try {
                     $context->assertPageContainsText($text);
                     return true;
-                }
-                catch(ResponseTextException $e) {
+                } catch (ResponseTextException $e) {
                     // NOOP
                 }
                 return false;
@@ -394,37 +399,33 @@ class FeatureContext extends MinkContext
         );
     }
 
-
     /**
-     *
-     * @When   /^(?:|I )wait for text "(?P<text>(?:[^"]|\\")*)" to appear, for (?P<wait>(?:\d+)*) seconds$/
-     * @param  $text
-     * @param  $wait
-     * @throws \Exception
+     * @When /^(?:|I )wait for text "(?P<text>(?:[^"]|\\")*)" to appear, for (?P<wait>(?:\d+)*) seconds$/
+     * @param $text
+     * @param $wait
+     * @throws Exception
      */
-    public function iWaitForTextToAppearForNSeconds($text,$wait)
+    public function iWaitForTextToAppearForNSeconds($text, $wait)
     {
         $this->spin(
             function (FeatureContext $context) use ($text) {
                 try {
                     $context->assertPageContainsText($text);
                     return true;
-                }
-                catch(ResponseTextException $e) {
+                } catch (ResponseTextException $e) {
                     // NOOP
                 }
                 return false;
-            }, $wait
+            },
+            $wait
         );
     }
 
     /**
-     *
-     * @Given  /^I fill in "([^"]*)" with a random email$/
-     * @param  $element
-     * @throws \Exception
+     * @Given /^I fill in "([^"]*)" with a random email$/
+     * @param $field
+     * @throws ElementNotFoundException
      */
-
     public function iFillInWithARandomEmail($field)
     {
         $field = $this->replacePlaceholdersByTokens($field);
@@ -439,31 +440,26 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     *
-     * @Given  /^I fill in "([^"]*)" with the fixed email$/
-     * @param  $element
-     * @throws \Exception
+     * @Given /^I fill in "([^"]*)" with the fixed email$/
+     * @param $field
+     * @throws ElementNotFoundException
      */
-
     public function iFillInWithTheFixedEmail($field)
     {
-
         $field = $this->replacePlaceholdersByTokens($field);
         $field = $this->fixStepArgument($field);
         $value = self::$featureHash . "@test.com";
         $this->getSession()->getPage()->fillField($field, $value);
     }
 
-
     /**
-     *
      * @Given /^document should open in new tab$/
      */
     public function documentShouldOpenInNewTab()
     {
-        $session     = $this->getSession();
+        $session = $this->getSession();
         $windowNames = $session->getWindowNames();
-        if(sizeof($windowNames) < 2) {
+        if (sizeof($windowNames) < 2) {
             throw new \ErrorException("Expected to see at least 2 windows opened");
         }
 
@@ -473,8 +469,9 @@ class FeatureContext extends MinkContext
 
     /**
      * Some forms do not have a Submit button just pass the ID
-     *
      * @Given /^I submit the form with id "([^"]*)"$/
+     * @param string $element
+     * @throws Exception
      */
     public function iSubmitTheFormWithId($element)
     {
@@ -485,6 +482,8 @@ class FeatureContext extends MinkContext
     /**
      *
      * @Given /^I use jquery to click on element "([^"]*)"$/
+     * @param string $element
+     * @throws Exception
      */
     public function iUseJqueryToClickOnElement($element)
     {
@@ -494,6 +493,9 @@ class FeatureContext extends MinkContext
 
     /**
      * @Given I use jquery to fill element :field with value :value
+     * @param string $element
+     * @param string $value
+     * @throws Exception
      */
     public function iUseJqueryToFillElementWithValue($element, $value)
     {
@@ -503,6 +505,8 @@ class FeatureContext extends MinkContext
 
     /**
      * @Given I use jquery to click in first element start with :field
+     * @param string $field
+     * @throws Exception
      */
     public function iUseJqueryToClickFirstElementStartWith($field)
     {
@@ -511,25 +515,9 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     * @Given I use jquery to click in element :field
-     */
-    public function iUseJqueryToClickInElement($field)
-    {
-        $script = sprintf('jQuery("%s").click();', $field);
-        $this->executeScript($field, $script);
-    }
-
-    /**
-     * @Given I use jquery to focus in element :field
-     */
-    public function iUseJqueryToFocusInElement($field)
-    {
-        $script = sprintf('jQuery("%s").click();', $field);
-        $this->executeScript($field, $script);
-    }
-
-    /**
      * @Given I use jquery to focus out element :field
+     * @param $field
+     * @throws Exception
      */
     public function iUseJqueryToFocusOut($field)
     {
@@ -539,6 +527,7 @@ class FeatureContext extends MinkContext
 
     /**
      * @Given I use jquery to fill element :field with a random email
+     * @throws Exception
      */
     public function iUseJqueryToFillElementWithARandomEmail($element)
     {
@@ -547,8 +536,10 @@ class FeatureContext extends MinkContext
         $script = sprintf('jQuery("%s").val("%s").change();', $element, $value);
         $this->executeScript($element, $script);
     }
+
     /**
      * @Given I use jquery to set :html to element :field with value :value
+     * @throws Exception
      */
     public function iUseJqueryToSetToElementWithValue($html, $element, $value)
     {
@@ -557,17 +548,18 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     *
      * @Given /^a new session$/
      */
     public function newSession()
     {
         $this->getSession()->start();
+        $this->getSession()->maximizeWindow();
     }
 
     /**
      *
      * @Given /^I define failure screenshot dir as "([^"]*)"$/
+     * @param string $dir
      */
     public function setScreenshotDir($dir)
     {
@@ -575,13 +567,14 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     *
      * @Given /^I save a screenshot to "([^"]*)" file$/
+     * @param $filename
+     * @throws DriverException
+     * @throws UnsupportedDriverActionException
      */
     public function screenshot($filename)
     {
-        $driver =  $this->getSession()->getDriver();
-     //   $driver->maximizeWindow();
+        $driver = $this->getSession()->getDriver();
 
         $data = $driver->getScreenshot();
         $file = fopen($filename, "w");
@@ -591,32 +584,42 @@ class FeatureContext extends MinkContext
 
     /**
      * @Given I check if card brand is selected in element :field
+     * @param $element
+     * @throws Exception
      */
     public function iCheckIfCardBrandIsSelectedInElement($element)
     {
-        $script = sprintf( "jQuery('%s').attr('style') == 'filter: none;';", $element);
+        $script = sprintf("jQuery('%s').attr('style') == 'filter: none;';", $element);
         $this->executeScript($element, $script);
     }
 
     /**
      * @Given I check if element :element exists
+     * @param $element
+     * @return bool
+     * @throws Exception
      */
     public function iCheckIfElementExists($element)
     {
         $node = $this->getSession()->getPage()->find('css', $element);
-        if($node) {
+        if ($node) {
             return true;
-        } else {
-            throw new Exception('Element not found: ' .  $element);
         }
+
+        throw new ElementNotFound("Element not found: {$element}");
     }
 
+    /**
+     * @param $field
+     * @param $script
+     * @throws ElementNotFound
+     */
     private function executeScript($field, $script)
     {
         $node = $this->getSession()->getPage()->find('css', $field);
 
-        if(!$node) {
-            throw new Exception('Element not found: ' . $script);
+        if (!$node) {
+            throw new ElementNotFound("Element not found: {$script}");
         }
 
         $this->getSession()->executeScript($script);
@@ -624,14 +627,17 @@ class FeatureContext extends MinkContext
 
     /**
      * @Given I click in :arg1 by container
+     * @param $arg1
+     * @throws Exception
      */
     public function iClickInByContainer1($arg1)
     {
         $script = "jQuery('#payment-buttons-container').children('button').css('border', '2px solid red')";
         $this->executeScript($arg1, $script);
+
         echo $script;
+
         $script = "jQuery('#payment-buttons-container').children('button').click()";
         $this->executeScript($arg1, $script);
     }
-
 }

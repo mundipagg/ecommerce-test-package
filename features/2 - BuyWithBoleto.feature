@@ -1,4 +1,4 @@
-Feature: Create order with boleto
+Feature: Create order's with boleto
 
   Background:
     Given a new session
@@ -16,11 +16,11 @@ Feature: Create order with boleto
     And I wait for text "added" to appear, for 10 seconds
     Then I wait for 3 seconds
 
-    #  I go to user form
+    # I go to user form
     Given I am on "/checkout"
     Then I wait for text "Email" to appear, for 20 seconds
 
-    #  I fill user data
+    # I fill user data
     Given I use jquery to fill element "#customer-email" with a random email
     And I wait for 5 seconds
     And I wait for text "First Name" to appear, for 10 seconds
@@ -39,18 +39,18 @@ Feature: Create order with boleto
     And I use jquery to click in first element start with "input[name^='ko_unique_']"
     Then I use jquery to set "<option selected='selected' data-title='Rio de Janeiro' value='502'>Rio de Janeiro</option>" to element "select[name='region_id']" with value "502"
 
-    #  I go to checkout
+    # I go to checkout
     Given I wait for 6 seconds
-    And I use jquery to click in element ".button.action.continue.primary"
+    And I use jquery to click on element ".button.action.continue.primary"
     Then I wait for text "Mundipagg" to appear, for 20 seconds
 
-    #  I select boleto payment method
+    # I select boleto payment method
     And I wait for 5 seconds
-    And I use jquery to click in element "#mundipagg_billet"
+    And I use jquery to click on element "#mundipagg_billet"
     And I wait for 4 seconds
 
-    #  I place order with boleto
+    # I place order with boleto
     Given I wait for 5 seconds
-    Then I use jquery to click in element "#mundipagg_billet-submit"
+    Then I use jquery to click on element "#mundipagg_billet-submit"
     Given I wait for 25 seconds
     And I wait for text "Thank you for your purchase" to appear, for 30 seconds

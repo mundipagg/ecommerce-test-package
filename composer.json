@@ -19,7 +19,8 @@
     ],
     "autoload": {
         "psr-4": {
-            "Mundipagg\\Features\\": "features"
+            "Mundipagg\\Features\\": "features",
+            "Mundipagg\\Exceptions\\": "exceptions"
         }
     }
 }
