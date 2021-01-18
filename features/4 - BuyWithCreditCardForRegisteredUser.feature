@@ -20,9 +20,8 @@ Feature: Create order with credit card for a registered user
     And I use jquery to fill element "#password-confirmation" with value "@teste123"
     And I use jquery to click on element "button[title='Create an Account']"
     And I wait for text "Thank you for registering" to appear, for 240 seconds
-    And I am on "/index.php"
     Given I am on "/index.php/customer/address/edit/"
-    And I wait for text "Add New Address" to appear, for 45 seconds
+    And I wait for 45 seconds
     Given I use jquery to fill element "#firstname" with value "Test"
     And I use jquery to fill element "#lastname" with value "Test"
     And I use jquery to fill element "#telephone" with value "(21) 2555-5555"
