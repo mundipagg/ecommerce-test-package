@@ -8,9 +8,9 @@ Feature: Create order with credit card for a registered user
   Scenario: I create a credit card order for a registered user, save the credit card and use it
     #I create a new user
     Given I wait for 1 seconds
-    And I am on "/index.php"
+    And I am on "/index.php?behat=ok"
     And I wait for 2 seconds
-    Given I am on "/index.php/customer/account/create/"
+    Given I am on "/customer/account/create/"
     And I wait for text "Create New Customer Account" to appear, for 20 seconds
     Given I use jquery to fill element "input[name='firstname']" with value "Test"
     And I use jquery to fill element "input[name='lastname']" with value "Test"
@@ -39,7 +39,7 @@ Feature: Create order with credit card for a registered user
     And I wait for text "You Saved The Address" to appear, for 20 seconds
 
     Given I wait for 1 seconds
-    And I am on "/fusion-backpack.html"
+    And I visit session path "/fusion-backpack.html"
     And I wait for text "add to cart" to appear, for 10 seconds
     And I click in element "#product-addtocart-button"
     And I wait for text "added" to appear, for 10 seconds
@@ -73,7 +73,7 @@ Feature: Create order with credit card for a registered user
     And I wait for text "Thank you for your purchase" to appear, for 30 seconds
 
     Given I wait for 1 seconds
-    And I am on "/fusion-backpack.html"
+    And I visit session path "/fusion-backpack.html"
     And I wait for text "add to cart" to appear, for 10 seconds
     And I click in element "#product-addtocart-button"
     And I wait for text "added" to appear, for 10 seconds

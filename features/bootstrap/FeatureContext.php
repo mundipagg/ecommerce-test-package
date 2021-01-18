@@ -492,6 +492,17 @@ class FeatureContext extends MinkContext
     }
 
     /**
+     *
+     * @Given /^I visit session path "([^"]*)"$/
+     * @param string $url
+     * @throws Exception
+     */
+    public function visitSessionPath($url)
+    {
+        $this->getSession()->visit($this->locatePath($url));
+    }
+
+    /**
      * @Given I use jquery to fill element :field with value :value
      * @param string $element
      * @param string $value
