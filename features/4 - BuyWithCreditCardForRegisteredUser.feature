@@ -20,8 +20,9 @@ Feature: Create order with credit card for a registered user
     And I use jquery to fill element "#password-confirmation" with value "@teste123"
     And I use jquery to click on element "button[title='Create an Account']"
     And I wait for text "Thank you for registering" to appear, for 240 seconds
-    Given I am on "/index.php/customer/address/edit/"
-    And I wait for 45 seconds
+    And I wait for 5 seconds
+    And I follow "Address Book"
+    And I wait for text "Add New Address" to appear, for 20 seconds
     Given I use jquery to fill element "#firstname" with value "Test"
     And I use jquery to fill element "#lastname" with value "Test"
     And I use jquery to fill element "#telephone" with value "(21) 2555-5555"
@@ -38,13 +39,13 @@ Feature: Create order with credit card for a registered user
     And I wait for text "You Saved The Address" to appear, for 20 seconds
 
     Given I wait for 1 seconds
-    And I am on "/index.php/fusion-backpack.html"
+    And I am on "/fusion-backpack.html"
     And I wait for text "add to cart" to appear, for 10 seconds
     And I click in element "#product-addtocart-button"
-    And I wait for text "added" to appear, for 20 seconds
-    Then I wait for 8 seconds
+    And I wait for text "added" to appear, for 10 seconds
+    Then I wait for 3 seconds
 
-    Given I am on "/index.php/checkout/#shipping"
+    Given I am on "/checkout/#shipping"
     And I wait for text "Flat Rate" to appear, for 20 seconds
     And I use jquery to click on element "input[name='ko_unique_1']"
     And I use jquery to click on element ".continue"
@@ -65,20 +66,20 @@ Feature: Create order with credit card for a registered user
     Then I wait for 3 seconds
     Given I check if card brand is selected in element ".brands.visa"
 
-    Given I wait for 11 seconds
+    Given I wait for 2 seconds
     And I use jquery to click on element "#mundipagg_creditcard-submit"
     And I wait for 5 seconds
     Given I wait for 20 seconds
     And I wait for text "Thank you for your purchase" to appear, for 30 seconds
 
-    Given I wait for 4 seconds
-    And I am on "/index.php/fusion-backpack.html"
+    Given I wait for 1 seconds
+    And I am on "/fusion-backpack.html"
     And I wait for text "add to cart" to appear, for 10 seconds
     And I click in element "#product-addtocart-button"
     And I wait for text "added" to appear, for 10 seconds
     Then I wait for 3 seconds
 
-    Given I am on "/index.php/checkout/#shipping"
+    Given I am on "/checkout/#shipping"
     And I wait for text "Flat Rate" to appear, for 20 seconds
     And I use jquery to click on element "input[name='ko_unique_1']"
     And I use jquery to click on element ".continue"
@@ -96,3 +97,7 @@ Feature: Create order with credit card for a registered user
     And I wait for 5 seconds
     Given I wait for 20 seconds
     And I wait for text "Thank you for your purchase" to appear, for 30 seconds
+
+
+
+
