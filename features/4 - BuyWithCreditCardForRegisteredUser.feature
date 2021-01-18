@@ -21,7 +21,7 @@ Feature: Create order with credit card for a registered user
     And I use jquery to click on element "button[title='Create an Account']"
     And I wait for text "Thank you for registering" to appear, for 240 seconds
     Given I am on "/customer/address/edit/"
-    And I wait for text "Add New Address" to appear, for 20 seconds
+    And I wait for text "Add New Address" to appear, for 30 seconds
     Given I use jquery to fill element "#firstname" with value "Test"
     And I use jquery to fill element "#lastname" with value "Test"
     And I use jquery to fill element "#telephone" with value "(21) 2555-5555"
